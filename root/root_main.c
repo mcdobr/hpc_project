@@ -36,10 +36,31 @@ int main(int argc, char *argv[]) {
     );
     printf("[Root] Spawned children\n");
 
+    MPI_Request send_buffer_sizes_requests[config.number_of_lines];
+    for (int line = 0; line < config.number_of_lines; ++line) {
+        printf("Sending buffer size to child %d\n", line);
+        MPI_Isend(&config.number_of_columns,
+                  1,
+                  MPI_INT,
+                  line,
+                  0,
+                  children_comm,
+                  &send_buffer_sizes_requests[line]
+        );
+    }
+    MPI_Waitall(config.number_of_lines, send_buffer_sizes_requests, MPI_STATUSES_IGNORE);
+
     MPI_Request send_requests[config.number_of_lines];
     for (int line = 0; line < config.number_of_lines; ++line) {
         printf("Sending line to child %d\n", line);
-        MPI_Isend(matrix + line * config.number_of_columns, config.number_of_columns, MPI_INT, line, 0, children_comm, &send_requests[line]);
+        MPI_Isend(matrix + line * config.number_of_columns,
+                  config.number_of_columns,
+                  MPI_INT,
+                  line,
+                  0,
+                  children_comm,
+                  &send_requests[line]
+        );
     }
 
     // Wait for results from all children
