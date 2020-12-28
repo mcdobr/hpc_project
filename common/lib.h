@@ -56,4 +56,14 @@ void read_configuration_from_argv(struct configuration_t *config, char* argv[]) 
     config->max_value = (int)strtol(argv[4], NULL, 10);
 }
 
+void debug_print(int *ptr, int length) {
+    for (int i = 0; i < length; ++i) {
+        printf("%d", ptr[i]);
+        if (i != length - 1) {
+            printf(" ");
+        }
+    }
+    printf("\n");
+}
+
 #endif //HPC_PROJECT_LIB_H
