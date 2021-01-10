@@ -23,6 +23,7 @@ int main(int argc, char *argv[]) {
 
     MPI_Init(NULL, NULL);
 
+    // Spawn children
     printf("[Root] Spawning children...\n");
     MPI_Comm children_comm;
     MPI_Comm_spawn("./worker_proc",
@@ -36,6 +37,7 @@ int main(int argc, char *argv[]) {
     );
     printf("[Root] Spawned children\n");
 
+    // Send buffer size to each child
     MPI_Request send_buffer_sizes_requests[config.number_of_lines];
     for (int line = 0; line < config.number_of_lines; ++line) {
         printf("Sending buffer size to child %d\n", line);
@@ -50,6 +52,7 @@ int main(int argc, char *argv[]) {
     }
     MPI_Waitall(config.number_of_lines, send_buffer_sizes_requests, MPI_STATUSES_IGNORE);
 
+    // Send buffer (line) to each child
     MPI_Request send_requests[config.number_of_lines];
     for (int line = 0; line < config.number_of_lines; ++line) {
         printf("Sending line to child %d\n", line);

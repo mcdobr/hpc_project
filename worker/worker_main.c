@@ -31,11 +31,13 @@ int main(int argc, char *argv[]) {
     }
 
 
+    // Receive buffer size from parent
     int buffer_length;
     printf("Worker [%d]: Receiving buffer size from parent...\n", rank);
     MPI_Recv(&buffer_length, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, parent_comm, MPI_STATUS_IGNORE);
     printf("Worker [%d]: Received buffer size %d from parent...\n", rank, buffer_length);
 
+    // Receive buffer from parent
     // todo: how to show an integer to distinguish between comms?
     printf("Worker [%d]: Receiving line from parent...\n", rank);
     MPI_Recv(line, config.number_of_columns, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, parent_comm, MPI_STATUS_IGNORE);
@@ -82,6 +84,7 @@ int main(int argc, char *argv[]) {
         sum = first_partial_sum + second_partial_sum;
     }
 
+    // Send result back to parent
     int parent_rank = 0;
     printf("Worker [%d]: Sending sum of line to parent...\n", rank);
     MPI_Send(&sum, 1, MPI_INT, parent_rank, 0, parent_comm);
